@@ -1,0 +1,3 @@
+-- TODO: definir aquí las tablas: users, exercises, routines,
+-- routine_exercises, workout_sessions, workout_sets
+-- Recuerda usar SERIAL PRIMARY KEY y las FOREIGN KEY con REFERENCES
