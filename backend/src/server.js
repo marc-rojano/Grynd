@@ -5,18 +5,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// TODO: importar y montar aquí las rutas (auth, exercises, routines, sessions)
-// Ejemplo: app.use('/api/auth', authRoutes);
-
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok' });
+app.get('/', (req, res) => {
+  res.send('Hello from Grynd backend!');
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
+import authRoutes from './routes/authRoutes.js';
+
+app.use('/api/auth', authRoutes);
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

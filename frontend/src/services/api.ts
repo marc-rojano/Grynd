@@ -1,8 +1,7 @@
-const API_URL = 'http://localhost:4000/api';
+import axios from 'axios';
 
-// TODO: función genérica para hacer fetch al backend, añadiendo
-// el header Authorization si hay un token guardado
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+});
 
-export async function apiFetch(endpoint: string, options: RequestInit = {}) {
-    // tu lógica aquí
-}
+export default api;

@@ -1,4 +1,4 @@
--- Users table
+-- Users table: Stores user credentials and basic information.
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -7,7 +7,7 @@ CREATE TABLE users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Workouts table
+-- Workouts table: Stores workout plans created by users.
 CREATE TABLE workouts (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -16,7 +16,7 @@ CREATE TABLE workouts (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Exercises table
+-- Exercises table: A central library of all available exercises.
 CREATE TABLE exercises (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -25,7 +25,7 @@ CREATE TABLE exercises (
     video_url VARCHAR(255)
 );
 
--- Workout_exercises table (join table for workouts and exercises)
+-- workout_exercises table: Links exercises to specific workouts (many-to-many).
 CREATE TABLE workout_exercises (
     id SERIAL PRIMARY KEY,
     workout_id INTEGER NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
@@ -33,11 +33,10 @@ CREATE TABLE workout_exercises (
     sets INTEGER,
     reps INTEGER,
     duration_minutes INTEGER,
-    -- Add a unique constraint to prevent duplicate exercises in the same workout
     UNIQUE (workout_id, exercise_id)
 );
 
--- Sets table
+-- Sets table: Logs the details of each set performed for an exercise in a workout.
 CREATE TABLE sets (
     id SERIAL PRIMARY KEY,
     workout_exercise_id INTEGER NOT NULL REFERENCES workout_exercises(id) ON DELETE CASCADE,
@@ -49,7 +48,7 @@ CREATE TABLE sets (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Progress table
+-- Progress table: Tracks a user's performance for a specific exercise over time.
 CREATE TABLE progress (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -58,6 +57,5 @@ CREATE TABLE progress (
     weight_kg REAL,
     reps INTEGER,
     sets INTEGER,
-    -- Add a unique constraint to prevent duplicate progress entries for the same user, exercise, and date
     UNIQUE (user_id, exercise_id, date)
 );

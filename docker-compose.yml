@@ -1,37 +1,48 @@
 services:
+  # Servicio de la Base de Datos (PostgreSQL)
   db:
-    image: postgres:16-alpine
+    image: postgres:14-alpine
     restart: always
     environment:
-      POSTGRES_USER: grynd_user
-      POSTGRES_PASSWORD: grynd_pass
+      POSTGRES_USER: grynduser
+      POSTGRES_PASSWORD: gryndpassword
       POSTGRES_DB: grynd
     ports:
-      - "5432:5432"
+      - '5432:5432' # Mapea el puerto de la DB a tu máquina local
     volumes:
-      - grynd_db_data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data # Persiste los datos de la DB
+      - ./db:/docker-entrypoint-initdb.d # Ejecuta scripts .sql al inicializar
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grynduser -d grynd"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Servicio del Backend (Node.js/Express)
   backend:
-    build: ./backend
+    build: ./backend # Construye la imagen desde el Dockerfile en la carpeta backend
     restart: always
     ports:
-      - "4000:4000"
-    environment:
-      DATABASE_URL: postgresql://grynd_user:grynd_pass@db:5432/grynd
-      JWT_SECRET: clave_secreta_para_desarrollo_local
-      JWT_EXPIRES_IN: 7d
-      FRONTEND_URL: http://localhost:5173
-      PORT: 4000
+      - '3000:3000'
+    volumes:
+      # Sincroniza solo el código fuente para no sobreescribir node_modules
+      - ./backend/src:/app/src
+    env_file:
+      - ./backend/.env # Carga las variables de entorno desde el archivo .env del backend
     depends_on:
-      - db
+      db:
+        condition: service_healthy # Espera a que la DB esté saludable, no solo iniciada
 
+  # Servicio del Frontend (React/Vite)
   frontend:
     build: ./frontend
     restart: always
     ports:
-      - "5173:5173"
-    depends_on:
-      - backend
+      - '5173:5173'
+    volumes:
+      # Sincroniza solo el código fuente y ficheros de config para no sobreescribir node_modules
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
 
 volumes:
-  grynd_db_data:
+  postgres-data: # Define el volumen para la persistencia de datos

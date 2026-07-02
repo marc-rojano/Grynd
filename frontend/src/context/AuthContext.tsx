@@ -1,38 +1,67 @@
-import { createContext, useContext, useState } from 'react';
-import type { ReactNode } from 'react';
+import { createContext, useState, useEffect, useCallback, PropsWithChildren } from 'react';
+import api from '../services/api';
+
+interface User {
+  id: number;
+  username: string;
+  email: string;
+}
 
 interface AuthContextType {
-    user: any;
-    token: string | null;
-    login: (token: string, user: any) => void;
-    logout: () => void;
+  isAuthenticated: boolean;
+  user: User | null;
+  loading: boolean;
+  login: (token: string) => Promise<void>;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<any>(null);
-    const [token, setToken] = useState<string | null>(null);
+export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    function login(newToken: string, newUser: any) {
-        setToken(newToken);
-        setUser(newUser);
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    delete api.defaults.headers.common['Authorization'];
+    setIsAuthenticated(false);
+    setUser(null);
+  }, []);
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        try {
+          const { data: userProfile } = await api.get<User>('/auth/profile');
+          setUser(userProfile);
+          setIsAuthenticated(true);
+        } catch (e) {
+          logout();
+        }
+      }
+      setLoading(false);
+    };
+    verifyAuth();
+  }, [logout]);
+
+  const login = useCallback(async (token: string) => {
+    localStorage.setItem('token', token);
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const { data: userProfile } = await api.get<User>('/auth/profile');
+      setUser(userProfile);
+      setIsAuthenticated(true);
+    } catch (e) {
+      logout();
     }
+  }, [logout]);
 
-    function logout() {
-        setToken(null);
-        setUser(null);
-    }
-
-    return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) throw new Error('useAuth debe usarse dentro de AuthProvider');
-    return context;
-}
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

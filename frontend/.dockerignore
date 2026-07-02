@@ -1,0 +1,4 @@
+# Ignora la carpeta de dependencias locales para no sobreescribir la del contenedor.
+node_modules
+# Ignora la carpeta de build.
+dist
