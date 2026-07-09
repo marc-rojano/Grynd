@@ -40,9 +40,9 @@ services:
     ports:
       - '5173:5173'
     volumes:
-      # Sincroniza solo el código fuente y ficheros de config para no sobreescribir node_modules
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
+      - ./frontend/vite.config.ts:/app/vite.config.ts # Asegura que la config de Vite esté siempre sincronizada
 
 volumes:
   postgres-data: # Define el volumen para la persistencia de datos
