@@ -1,0 +1,97 @@
+/*
+  Estilos para la página de perfil, alineados con el tema oscuro de la aplicación.
+*/
+
+/* Contenedor principal de la página de perfil */
+.profile-page-container {
+    max-width: 600px;
+    margin: 120px auto 40px;
+    padding: 32px;
+    /* Usamos un fondo semi-transparente para integrarse con el fondo global */
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid var(--color-border-dark);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px var(--color-shadow-dark-25);
+    backdrop-filter: blur(12px);
+    /* Efecto "glassmorphism" */
+    animation: fade-in 0.5s ease-in-out;
+    color: var(--color-text-light);
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Encabezado del perfil */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--color-border-dark);
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: var(--color-white);
+}
+
+/* Contenedor de la información del usuario */
+.profile-info p {
+    margin: 12px 0;
+    line-height: 1.7;
+    color: var(--color-text-gray);
+    font-size: 1rem;
+}
+
+.profile-info strong {
+    color: var(--color-text-light);
+    font-weight: 600;
+}
+
+/* Botón de cerrar sesión */
+.logout-button {
+    width: 100%;
+    padding: 12px 20px;
+    margin-top: 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-white);
+    /* Usamos el gradiente naranja principal */
+    background: linear-gradient(135deg, var(--color-primary-orange-light), var(--color-primary-orange-dark));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 24px var(--color-shadow-orange-24);
+}
+
+.logout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px var(--color-shadow-orange-24);
+}
+
+/* Mensajes */
+.profile-error,
+.loading-message {
+    text-align: center;
+    padding: 20px;
+    color: var(--color-text-gray);
+}
+
+.profile-error {
+    color: #fca5a5;
+    /* Un rojo más suave para el tema oscuro */
+    background: rgba(153, 27, 27, 0.3);
+    border-radius: 8px;
+}

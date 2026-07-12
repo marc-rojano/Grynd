@@ -25,8 +25,10 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      # Sincroniza solo el código fuente para no sobreescribir node_modules
-      - ./backend/src:/app/src
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
     env_file:
       - ./backend/.env # Carga las variables de entorno desde el archivo .env del backend
     depends_on:
@@ -40,9 +42,11 @@ services:
     ports:
       - '5173:5173'
     volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
-      - ./frontend/vite.config.ts:/app/vite.config.ts # Asegura que la config de Vite esté siempre sincronizada
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
+      WATCHPACK_POLLING: 'true'
 
 volumes:
   postgres-data: # Define el volumen para la persistencia de datos

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient, { isAxiosError } from './axios';
+import apiClient, { isAxiosError } from '../axios';
 import './LoginPage.css';
 
 interface LoginPageProps {
